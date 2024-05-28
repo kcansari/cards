@@ -1,6 +1,10 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+	"strings"
+)
 
 type Deck []string
 type CardSuits []string
@@ -27,4 +31,24 @@ func (d Deck) print() {
 
 func deal(d Deck, handSize int) (Deck, Deck) {
 	return d[:handSize], d[handSize:]
+}
+
+func (d Deck) toString() string {
+	return strings.Join([]string(d), ",")
+}
+
+func (d Deck) saveToFile(filename string) error {
+	return os.WriteFile(filename, []byte(d.toString()), 0666)
+}
+
+func newDeckFromFile(filename string) Deck {
+	bs, err := os.ReadFile(filename)
+
+	if err != nil {
+		fmt.Println("Error -->", err)
+		os.Exit(1)
+	}
+	s := strings.Split(string(bs), ",")
+
+	return Deck(s)
 }
